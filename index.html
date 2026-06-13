@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruta de Aprendizaje IA 2026 - Saberes Avanzados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #818cf8;       /* indigo claro — contraste 4.7:1 sobre dark */
+            --secondary: #c084fc;     /* violeta claro — contraste 5.1:1 sobre dark */
+            --accent: #f472b6;        /* rosa claro — contraste 4.8:1 */
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-main: #f1f5f9;     /* blanco cálido para texto principal */
+            --text-sub: #cbd5e1;      /* gris claro para subtítulos — contraste 8:1 */
+            --badge-ini-bg: #3730a3;  /* azul oscuro sólido */
+            --badge-ini-fg: #e0e7ff;  /* texto lavanda claro — 7.2:1 */
+            --badge-comp-bg: #6b21a8; /* morado oscuro sólido */
+            --badge-comp-fg: #f3e8ff; /* texto violeta claro — 7.5:1 */
+            --badge-eval-bg: #92400e; /* ámbar oscuro sólido */
+            --badge-eval-fg: #fef3c7; /* texto amarillo claro — 7.8:1 */
+        }
+        [data-bs-theme="light"] {
+            --primary: #4338ca;
+            --secondary: #7e22ce;
+            --accent: #be185d;
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --glass-border: rgba(0, 0, 0, 0.15);
+            --text-main: #0f172a;
+            --text-sub: #334155;
+            --badge-ini-bg: #c7d2fe;
+            --badge-ini-fg: #1e1b4b;
+            --badge-comp-bg: #e9d5ff;
+            --badge-comp-fg: #3b0764;
+            --badge-eval-bg: #fde68a;
+            --badge-eval-fg: #451a03;
+        }
+        /* ── Alto contraste ───────────────────────── */
+        body.hc {
+            --primary: #ffffff;
+            --secondary: #ffff00;
+            --accent: #00ffff;
+            --glass-bg: #000000;
+            --glass-border: #ffffff;
+            --text-main: #ffffff;
+            --text-sub: #ffff00;
+            --badge-ini-bg: #0000cc;
+            --badge-ini-fg: #ffffff;
+            --badge-comp-bg: #660099;
+            --badge-comp-fg: #ffffff;
+            --badge-eval-bg: #cc6600;
+            --badge-eval-fg: #ffffff;
+            background: #000 !important;
+        }
+        body.hc .glass-card { background: #111 !important; border: 2px solid #fff !important; }
+        [data-bs-theme="light"] {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            background-color: #f8fafc;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+            background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 45%),
+                        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.12), transparent 45%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4, h5, h6, .brand-font { font-family: 'Outfit', sans-serif; }
+        h2 { font-size: 1.6rem !important; }
+        p, li, label { font-size: 1rem; line-height: 1.75; }
+        /* Foco visible para navegación por teclado */
+        :focus-visible {
+            outline: 3px solid var(--accent) !important;
+            outline-offset: 3px !important;
+            border-radius: 4px;
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .roadmap-container {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 1rem 0.5rem;
+            margin-bottom: 1.5rem;
+            scrollbar-width: thin;
+            scroll-behavior: smooth;
+        }
+        .roadmap-node {
+            min-width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            border: 2px solid var(--glass-border);
+            transition: all 0.25s ease;
+            position: relative;
+            background: var(--glass-bg);
+        }
+        .roadmap-node.locked {
+            background: rgba(0, 0, 0, 0.2);
+            color: #6c757d;
+            cursor: not-allowed;
+            border-color: transparent;
+        }
+        .roadmap-node.unlocked {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .roadmap-node.completed {
+            background: #10b981;
+            color: white;
+            border-color: #059669;
+        }
+        .roadmap-node.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
+            transform: scale(1.15);
+            z-index: 10;
+        }
+        .roadmap-node::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            width: 10px;
+            height: 2px;
+            background: var(--glass-border);
+            z-index: -1;
+        }
+        .roadmap-node:last-child::after {
+            display: none;
+        }
+        /* ── Badges accesibles ─────────────────────── */
+        .saber-badge {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: normal !important;
+            word-break: break-word;
+            text-align: left;
+            max-width: 100%;
+            line-height: 1.5;
+            font-size: 0.9rem !important;  /* mínimo legible */
+            font-weight: 600;
+            padding: 0.45em 0.75em !important;
+            border-radius: 0.5rem !important;
+            border: none !important;
+        }
+        .saber-badge:hover  { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+        /* Colores sólidos con contraste WCAG AA */
+        .badge-ini  { background-color: var(--badge-ini-bg)  !important; color: var(--badge-ini-fg)  !important; }
+        .badge-comp { background-color: var(--badge-comp-bg) !important; color: var(--badge-comp-fg) !important; }
+        .badge-eval { background-color: var(--badge-eval-bg) !important; color: var(--badge-eval-fg) !important; }
+        .badges-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            overflow: hidden;
+        }
+        /* ── Término leído ──────────────────────────────────── */
+        .saber-badge.term-read {
+            opacity: 0.75;
+            position: relative;
+        }
+        .saber-badge.term-read::after {
+            content: ' ✓';
+            font-weight: 900;
+            color: #86efac;  /* verde claro WCAG AA */
+        }
+        /* ── Barra de progreso de lectura ──────────────────── */
+        #reading-progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #22c55e, #86efac);
+            transition: width 0.4s ease;
+        }
+        /* ── Quiz bloqueado ──────────────────────────────── */
+        #quiz-lock-panel {
+            border-left: 5px solid #6366f1;
+            padding: 1.25rem 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0 0.75rem 0.75rem 0;
+            background: rgba(99,102,241,0.07);
+            text-align: center;
+        }
+        /* ── Quiz accesible ────────────────────────── */
+        .quiz-container {
+            border-left: 5px solid var(--secondary);
+            padding: 1.25rem 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0 0.75rem 0.75rem 0;
+            background: rgba(255,255,255,0.04);
+        }
+        .quiz-container h6 { font-size: 1.05rem; color: var(--text-main); }
+        .quiz-container p  { font-size: 1rem;    color: var(--text-sub); }
+        /* Botones de quiz con fondo sólido y texto oscuro */
+        .quiz-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.25);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s, border-color 0.2s;
+            text-align: left;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .quiz-btn:hover:not(:disabled) {
+            background: rgba(129,140,248,0.25);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .quiz-btn.correct {
+            background: #166534 !important;
+            border-color: #22c55e !important;
+            color: #dcfce7 !important;
+            font-weight: 700;
+        }
+        [data-bs-theme="light"] .quiz-btn {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            color: #0f172a;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bs-body-bg);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        /* ── Toast de registro ──────────────────────── */
+        #tracking-toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: rgba(22,101,52,0.92);
+            color: #dcfce7;
+            border: 1px solid #22c55e;
+            border-radius: 0.75rem;
+            padding: 0.65rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: none;
+            z-index: 3000;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 24px rgba(34,197,94,0.2);
+            animation: fadeIn 0.3s ease;
+        }
+        .animation-fade {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* ── Glosario Técnico ─────────────────────── */
+        .glossary-search {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            color: var(--text-main);
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .glossary-search:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.25);
+        }
+        .glossary-search-wrap {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+        .glossary-search-wrap i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            pointer-events: none;
+        }
+        .glossary-cat-card {
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: default;
+        }
+        .glossary-cat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+        .glossary-term {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            margin-bottom: 0.5rem;
+        }
+        .glossary-term:hover {
+            background: rgba(99,102,241,0.1);
+            border-color: var(--primary);
+        }
+        .glossary-term-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .glossary-term-title i {
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+        .glossary-term.open .glossary-term-title i {
+            transform: rotate(90deg);
+        }
+        .glossary-term-def {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+        .glossary-term.open .glossary-term-def {
+            max-height: 300px;
+            padding-top: 0.75rem;
+        }
+        .glossary-count {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+        .glossary-no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-sub);
+            font-size: 1.1rem;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .glass-card { border: 1px solid #ccc; box-shadow: none; backdrop-filter: none; background: white;}
+            body { background: white; color: black; }
+            [data-bs-theme="dark"] { color: black; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+        <div class="glass-card p-5 text-center" style="max-width: 440px; width: 90%;">
+            <h1 class="brand-font gradient-text mb-2 fw-bold"><i class="fas fa-brain"></i> IA 2026</h1>
+            <p class="text-muted mb-4" style="font-size:0.9rem;">Ruta de Aprendizaje — CTP</p>
+            <h5 class="mb-3 text-start">Datos del Estudiante</h5>
+            <!-- Nombre -->
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" id="new-user-name" class="form-control" placeholder="Nombre completo" autocomplete="name">
+            </div>
+            <!-- Sección -->
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fas fa-users"></i></span>
+                <input type="text" id="new-user-grupo" class="form-control" placeholder="Sección (ej: 10-A, 11-B)" autocomplete="off">
+            </div>
+            <!-- Guardar perfil -->
+            <button class="btn btn-outline-primary w-100 mb-2" onclick="createNewUser()">
+                <i class="fas fa-plus me-1"></i> Registrar nuevo perfil
+            </button>
+            <hr class="opacity-25">
+            <p class="text-muted small mb-2">O selecciona un perfil guardado:</p>
+            <select id="user-select" class="form-select mb-3">
+                <option value="">Selecciona estudiante guardado...</option>
+            </select>
+            <button class="btn btn-success w-100" onclick="login()">
+                <i class="fas fa-sign-in-alt me-1"></i> Empezar Ruta
+            </button>
+            <hr class="opacity-25 my-3">
+            <!-- Restaurar progreso desde otro equipo -->
+            <details>
+                <summary class="text-muted small" style="cursor:pointer; user-select:none;">
+                    <i class="fas fa-sync-alt me-1"></i> ¿Cambias de equipo? Restaurar progreso
+                </summary>
+                <div class="mt-2">
+                    <textarea id="import-code-input" class="form-control form-control-sm mb-2"
+                        rows="3" placeholder="Pega aquí tu código de progreso..."
+                        style="font-family:monospace; font-size:0.75rem;"></textarea>
+                    <button class="btn btn-outline-info btn-sm w-100" onclick="importProgress()">
+                        <i class="fas fa-file-import me-1"></i> Restaurar desde código
+                    </button>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- Toast de registro a Google Sheets -->
+    <div id="tracking-toast">
+        <i class="fas fa-check-circle me-1"></i> <span id="tracking-toast-msg">Visita registrada</span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg glass-card m-3 sticky-top no-print" style="top: 15px; z-index: 1000;">
+        <div class="container-fluid">
+            <a class="navbar-brand brand-font gradient-text fw-bold" href="#">
+                <i class="fas fa-route me-2"></i>Ruta IA 2026
+            </a>
+            <div class="d-flex align-items-center ms-auto">
+                <span class="me-3 fw-bold no-print"><i class="fas fa-user-graduate text-primary me-1"></i> <span id="current-user-display"></span></span>
+                <button class="btn btn-sm btn-outline-secondary me-2 no-print" onclick="toggleTheme()" aria-label="Cambiar tema claro/oscuro"><i class="fas fa-moon" aria-hidden="true"></i></button>
+                <button class="btn btn-sm btn-outline-warning me-2 no-print" onclick="toggleHC()" aria-label="Activar/desactivar alto contraste"><i class="fas fa-adjust" aria-hidden="true"></i> HC</button>
+                <button class="btn btn-sm btn-outline-info me-2 no-print" onclick="showSection('report')" aria-label="Ver reporte de avance"><i class="fas fa-chart-pie" aria-hidden="true"></i> Reporte</button>
+                <button class="btn btn-sm btn-outline-success me-2 no-print" onclick="showSection('dashboard')" aria-label="Volver a la ruta"><i class="fas fa-book-reader" aria-hidden="true"></i> Ruta</button>
+                <button class="btn btn-sm btn-outline-light me-2 no-print" onclick="showSection('glossary')" aria-label="Consultar glosario técnico"><i class="fas fa-spell-check" aria-hidden="true"></i> Glosario</button>
+                <button class="btn btn-sm btn-outline-warning me-2 no-print" onclick="exportProgress()" aria-label="Exportar código de progreso" title="Guardar progreso para otro equipo">
+                    <i class="fas fa-cloud-download-alt" aria-hidden="true"></i> Guardar
+                </button>
+                <button class="btn btn-sm btn-danger no-print" onclick="logout()" aria-label="Cerrar sesión"><i class="fas fa-sign-out-alt" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4 py-2">
+        <!-- Dashboard Section -->
+        <div id="section-dashboard">
+            <!-- Roadmap upper header -->
+            <div class="glass-card p-3 mb-4 no-print">
+                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                    <span class="fw-bold"><i class="fas fa-map-signs text-primary me-1"></i> Mapa de Ruta por Nivel</span>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Selección de Nivel">
+                        <button id="tab-lvl-10" class="btn btn-sm btn-outline-primary" onclick="setRoadmapLevel('Décimo')" aria-label="Ver ruta de Décimo año">Décimo</button>
+                        <button id="tab-lvl-11" class="btn btn-sm btn-outline-primary" onclick="setRoadmapLevel('Undécimo')" aria-label="Ver ruta de Undécimo año">Undécimo</button>
+                        <button id="tab-lvl-12" class="btn btn-sm btn-outline-primary" onclick="setRoadmapLevel('Duodécimo')" aria-label="Ver ruta de Duodécimo año">Duodécimo</button>
+                    </div>
+                    <span class="badge bg-success" id="progress-percentage">Progreso: 0%</span>
+                </div>
+                <div class="roadmap-container" id="roadmap-track">
+                    <!-- Nodes populated by JS -->
+                </div>
+            </div>
+
+            <!-- Focused Card Container -->
+            <div class="row justify-content-center">
+                <div class="col-xl-8 col-lg-10">
+                    <div id="focused-card" class="glass-card p-4 p-md-5 animation-fade">
+                        <!-- Single active learning unit populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Section -->
+        <div id="section-report" style="display: none;">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="glass-card p-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="brand-font gradient-text"><i class="fas fa-file-contract"></i> Reporte de Avance</h2>
+                            <button class="btn btn-primary no-print" onclick="window.print()"><i class="fas fa-print"></i> Imprimir / Guardar PDF</button>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>Estudiante: <strong id="report-student-name" class="text-primary"></strong></h5>
+                                <p class="text-muted mb-1">Especialidad: <strong>Inteligencia Artificial 2026</strong></p>
+                                <p class="text-muted">Fecha del reporte: <span id="report-date"></span></p>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <h5>Nivel de Avance: <span id="report-percentage" class="badge bg-success">0%</span></h5>
+                                <p class="mb-1">Unidades Dominadas: <strong id="report-total-dominados">0</strong> / <span class="report-total-units">0</span></p>
+                                <p>Cuestionarios Aprobados: <strong id="report-total-quizzes">0</strong> / <span class="report-total-units">0</span></p>
+                            </div>
+                        </div>
+                        <div id="report-details">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Glossary Section -->
+        <div id="section-glossary" style="display: none;">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="glass-card p-4 p-md-5 animation-fade">
+                        <div class="text-center mb-4">
+                            <h2 class="brand-font gradient-text fw-bold mb-2"><i class="fas fa-spell-check"></i> Glosario Técnico</h2>
+                            <p class="text-muted" style="font-size:0.95rem;">Conceptos avanzados de la industria tecnológica para consulta libre en cualquier momento.</p>
+                        </div>
+                        <div class="glossary-search-wrap">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="glossary-search-input" class="glossary-search" placeholder="Buscar término (ej. Kubernetes, TLS, LLM...)" oninput="filterGlossary()" autocomplete="off">
+                        </div>
+                        <div id="glossary-content">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Definition Modal -->
+    <div class="modal fade" id="defModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title brand-font fw-bold" id="defModalTitle">Título</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info bg-transparent border-info">
+                        <strong><i class="fas fa-book-open"></i> Definición Pedagógica:</strong>
+                        <p id="defModalDesc" class="mb-0 mt-2" style="text-align: justify; line-height: 1.6;"></p>
+                    </div>
+                    <div class="alert alert-success bg-transparent border-success">
+                        <strong><i class="fas fa-code"></i> Ejemplo Técnico / Aplicación Práctica:</strong>
+                        <pre id="defModalExample" class="mb-0 mt-2" style="white-space: pre-wrap; font-family: monospace; font-size: 0.95rem;"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Exportar Progreso Portátil -->
+    <div class="modal fade" id="exportProgressModal" tabindex="-1" aria-labelledby="exportProgressTitle">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title brand-font fw-bold" id="exportProgressTitle">
+                        <i class="fas fa-cloud-download-alt text-warning me-2"></i>Código de Progreso Portátil
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning bg-transparent border-warning mb-3" style="font-size:0.9rem;">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <strong>¿Cómo usarlo?</strong><br>
+                        <ol class="mb-0 mt-1 ps-3">
+                            <li>Copia el código de abajo (ya está copiado si usas Chrome).</li>
+                            <li>Guárdalo en un bloc de notas, correo o mensaje.</li>
+                            <li>En el otro equipo, en la pantalla de inicio, despliega <em>"¿Cambias de equipo?"</em> y pega el código.</li>
+                        </ol>
+                    </div>
+                    <label class="form-label fw-bold small">Tu código de progreso:</label>
+                    <textarea id="export-code-area" class="form-control mb-3"
+                        rows="5" readonly
+                        style="font-family: monospace; font-size: 0.72rem; word-break: break-all; cursor: pointer;"
+                        onclick="this.select(); navigator.clipboard.writeText(this.value).then(()=>document.getElementById('copy-confirm').style.display='block');"
+                    ></textarea>
+                    <div id="copy-confirm" class="alert alert-success py-1 text-center mb-2" style="display:none; font-size:0.85rem;">
+                        <i class="fas fa-check me-1"></i> ¡Código copiado al portapapeles!
+                    </div>
+                    <button class="btn btn-warning w-100 fw-bold"
+                        onclick="navigator.clipboard.writeText(document.getElementById('export-code-area').value).then(()=>{document.getElementById('copy-confirm').style.display='block';})">
+                        <i class="fas fa-copy me-1"></i> Copiar código
+                    </button>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        El código solo contiene tu progreso académico, no datos personales sensibles.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="manual_data.js"></script>
+
+    <script>
+        // ── Configuración Google Sheets ─────────────────────────────────────
+        // IMPORTANTE: pega aquí la URL de tu Google Apps Script desplegado
+        const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxyUmsx5zJIG8tmHuQc5IzOEYGVLlW-OhQ-brBFbsUPa3nXs3CzdmhvkEXqqFHLtKgITQ/exec';
+        // ────────────────────────────────────────────────────────────────────
+
+        let currentUser = null;
+        let currentGrupo = '';
+        let userData = { progress: {}, quizzes: {} };
+        let activeIndex = 0;
+        let sortedData = [];
+        let selectedRoadmapLevel = "Décimo";
+        let visitStartTime = null; // Para medir tiempo en concepto
+
+        function setRoadmapLevel(level) {
+            selectedRoadmapLevel = level;
+            updateRoadmapTabs();
+            renderRoadmap();
+        }
+
+        function updateRoadmapTabs() {
+            const levels = ["Décimo", "Undécimo", "Duodécimo"];
+            levels.forEach(lvl => {
+                const btn = document.getElementById(`tab-lvl-${lvl === 'Décimo' ? '10' : lvl === 'Undécimo' ? '11' : '12'}`);
+                if (btn) {
+                    if (lvl === selectedRoadmapLevel) {
+                        btn.classList.add('active');
+                        btn.classList.remove('btn-outline-primary');
+                        btn.classList.add('btn-primary');
+                    } else {
+                        btn.classList.remove('active');
+                        btn.classList.add('btn-outline-primary');
+                        btn.classList.remove('btn-primary');
+                    }
+                }
+            });
+        }
+
+        // Sort data dynamically by Nivel (Décimo -> Undécimo -> Duodécimo)
+        function initSortedData() {
+            const levelOrder = { "Décimo": 10, "Undécimo": 11, "Duodécimo": 12 };
+            sortedData = [...MANUAL_DATA].sort((a, b) => {
+                if (levelOrder[a.nivel] !== levelOrder[b.nivel]) {
+                    return levelOrder[a.nivel] - levelOrder[b.nivel];
+                }
+                return a.id - b.id; // Preserve original order within same level
+            });
+        }
+
+        // Get max unlocked index based on consecutive quizzes approved
+        function getMaxUnlockedIndex() {
+            let maxIndex = 0;
+            for (let i = 0; i < sortedData.length; i++) {
+                const item = sortedData[i];
+                if (userData.quizzes[item.id]) {
+                    maxIndex = i + 1;
+                } else {
+                    break;
+                }
+            }
+            return Math.min(maxIndex, sortedData.length - 1);
+        }
+
+        // Auth & Profiles
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('ia_users') || '[]');
+            const select = document.getElementById('user-select');
+            select.innerHTML = '<option value="">Selecciona estudiante guardado...</option>';
+            users.forEach(u => {
+                let opt = document.createElement('option');
+                opt.value = u; opt.textContent = u;
+                select.appendChild(opt);
+            });
+        }
+
+        function createNewUser() {
+            const name  = document.getElementById('new-user-name').value.trim();
+            const grupo = document.getElementById('new-user-grupo').value.trim();
+            if (!name) { alert('Por favor ingresa tu nombre completo.'); return; }
+            let users = JSON.parse(localStorage.getItem('ia_users') || '[]');
+            // Guardar nombre y sección juntos
+            const key = grupo ? `${name} (${grupo})` : name;
+            if (!users.includes(key)) {
+                users.push(key);
+                localStorage.setItem('ia_users', JSON.stringify(users));
+                localStorage.setItem(`ia_data_${key}`, JSON.stringify({ progress: {}, quizzes: {}, termsRead: {}, grupo }));
+            }
+            loadUsers();
+            document.getElementById('new-user-name').value = '';
+            document.getElementById('new-user-grupo').value = '';
+            document.getElementById('user-select').value = key;
+        }
+
+        function login() {
+            const select = document.getElementById('user-select');
+            const name   = select.value;
+            if (!name) { alert('Por favor selecciona o registra un perfil.'); return; }
+            currentUser = name;
+            // Extraer sección del nombre compuesto (ej: "Ana López (10-A)")
+            const match = name.match(/\(([^)]+)\)$/);
+            currentGrupo = match ? match[1] : '';
+            document.getElementById('current-user-display').textContent = currentUser;
+            document.getElementById('login-overlay').style.display = 'none';
+
+            userData = JSON.parse(localStorage.getItem(`ia_data_${currentUser}`) || '{"progress":{}, "quizzes":{}, "termsRead":{}, "grupo":""}');
+            if (!userData.termsRead) userData.termsRead = {}; // compatibilidad con perfiles antiguos
+
+            initSortedData();
+            activeIndex = getMaxUnlockedIndex();
+            selectedRoadmapLevel = sortedData[activeIndex].nivel;
+            updateRoadmapTabs();
+            renderRoadmap();
+            renderCard();
+            updateProgressPercentage();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('login-overlay').style.display = 'flex';
+        }
+
+        function showSection(sec) {
+            document.getElementById('section-dashboard').style.display = sec === 'dashboard' ? 'block' : 'none';
+            document.getElementById('section-report').style.display = sec === 'report' ? 'block' : 'none';
+            document.getElementById('section-glossary').style.display = sec === 'glossary' ? 'block' : 'none';
+            if (sec === 'report') generateReport();
+            if (sec === 'glossary') renderGlossary();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.setAttribute('data-bs-theme', html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+        }
+        function toggleHC() {
+            document.body.classList.toggle('hc');
+        }
+
+        // ── Lectura de términos ─────────────────────────────────────────────
+        function getAllTerms(item) {
+            return [
+                ...item.saberes_iniciales,
+                ...item.saberes_complementarios,
+                ...(item.conceptos_evaluados || [])
+            ].map(s => s.term);
+        }
+
+        function showDef(term, def, ex) {
+            // Registrar término como leído
+            const item   = sortedData[activeIndex];
+            const unitId = item.id;
+            if (!userData.termsRead[unitId]) userData.termsRead[unitId] = [];
+            if (!userData.termsRead[unitId].includes(term)) {
+                userData.termsRead[unitId].push(term);
+                localStorage.setItem(`ia_data_${currentUser}`, JSON.stringify(userData));
+                updateTermsProgress(); // actualizar barra y estado del quiz sin re-renderizar
+            }
+            // Mostrar modal
+            document.getElementById('defModalTitle').textContent = term;
+            document.getElementById('defModalDesc').textContent  = def;
+            document.getElementById('defModalExample').textContent = ex;
+            new bootstrap.Modal(document.getElementById('defModal')).show();
+        }
+
+        function updateTermsProgress() {
+            const item      = sortedData[activeIndex];
+            const allTerms  = getAllTerms(item);
+            const readTerms = userData.termsRead[item.id] || [];
+            const total     = allTerms.length;
+            const read      = allTerms.filter(t => readTerms.includes(t)).length;
+            const pct       = total > 0 ? Math.round((read / total) * 100) : 100;
+
+            // Barra de progreso
+            const bar = document.getElementById('reading-progress-bar');
+            if (bar) bar.style.width = pct + '%';
+
+            // Contador
+            const counter = document.getElementById('reading-counter');
+            if (counter) counter.textContent = `${read} de ${total} términos leídos`;
+
+            // Marcar badges leídos con el checkmark ✓
+            document.querySelectorAll('.saber-badge[data-term]').forEach(el => {
+                if (readTerms.includes(el.dataset.term)) {
+                    el.classList.add('term-read');
+                }
+            });
+
+            // Bloquear o desbloquear quiz
+            const lockPanel      = document.getElementById('quiz-lock-panel');
+            const quizWrap       = document.getElementById('quiz-active-wrap');
+            const isCompleted    = userData.quizzes[item.id] === true;
+            const allRead        = read >= total;
+
+            if (lockPanel && quizWrap) {
+                if (allRead || isCompleted) {
+                    lockPanel.style.display = 'none';
+                    quizWrap.style.display  = 'block';
+                } else {
+                    lockPanel.style.display = 'block';
+                    quizWrap.style.display  = 'none';
+                    // Actualizar texto del panel con la cantidad pendiente
+                    const pendingEl = document.getElementById('quiz-lock-remaining');
+                    if (pendingEl) pendingEl.textContent = total - read;
+                }
+            }
+        }
+        // ────────────────────────────────────────────────────────────────────
+
+        // Render upper roadmap nodes
+        function renderRoadmap() {
+            const track = document.getElementById('roadmap-track');
+            track.innerHTML = '';
+            
+            const maxUnlocked = getMaxUnlockedIndex();
+
+            sortedData.forEach((item, index) => {
+                if (item.nivel !== selectedRoadmapLevel) {
+                    return;
+                }
+                
+                const node = document.createElement('div');
+                node.className = 'roadmap-node';
+                node.textContent = index + 1;
+                
+                const isCompleted = userData.quizzes[item.id] === true;
+                const isLocked = index > maxUnlocked;
+
+                if (isLocked) {
+                    node.classList.add('locked');
+                    node.innerHTML = `<i class="fas fa-lock small"></i>`;
+                } else if (isCompleted) {
+                    node.classList.add('completed');
+                } else {
+                    node.classList.add('unlocked');
+                }
+
+                if (index === activeIndex) {
+                    node.classList.add('active');
+                }
+
+                // Node click event
+                node.onclick = () => {
+                    if (!isLocked) {
+                        activeIndex = index;
+                        renderRoadmap();
+                        renderCard();
+                    } else {
+                        alert("🔒 Esta unidad está bloqueada. Debes superar el test anterior para desbloquearla.");
+                    }
+                };
+
+                track.appendChild(node);
+            });
+            
+            // Scroll to active node
+            setTimeout(() => {
+                const activeNode = track.querySelector('.roadmap-node.active');
+                if (activeNode) {
+                    track.scrollLeft = activeNode.offsetLeft - track.offsetWidth / 2 + activeNode.offsetWidth / 2;
+                }
+            }, 100);
+        }
+
+        function checkQuiz(id, correctIdx, selectedIdx) {
+            if (correctIdx === selectedIdx) {
+                userData.quizzes[id] = true;
+                userData.progress[id] = 'dominado';
+
+                // Guardar en localStorage
+                localStorage.setItem(`ia_data_${currentUser}`, JSON.stringify(userData));
+
+                // Backup automático del progreso en Google Sheets
+                backupProgressToSheets();
+
+                alert("🎉 ¡Respuesta Correcta! Has desbloqueado la siguiente unidad.");
+
+                if (activeIndex < sortedData.length - 1) activeIndex++;
+
+                selectedRoadmapLevel = sortedData[activeIndex].nivel;
+                updateRoadmapTabs();
+                renderRoadmap();
+                renderCard();
+                updateProgressPercentage();
+            } else {
+                alert("❌ Respuesta incorrecta. Vuelve a revisar las definiciones y ejemplos antes de intentarlo.");
+            }
+        }
+
+        function selectUnit(index) {
+            if(index >= 0 && index < sortedData.length) {
+                const maxUnlocked = getMaxUnlockedIndex();
+                if(index <= maxUnlocked) {
+                    activeIndex = index;
+                    selectedRoadmapLevel = sortedData[activeIndex].nivel;
+                    updateRoadmapTabs();
+                    renderRoadmap();
+                    renderCard();
+                }
+            }
+        }
+
+        // ── Portabilidad de progreso ────────────────────────────────────────
+        function exportProgress() {
+            const snapshot = {
+                v: 1,
+                user: currentUser,
+                grupo: currentGrupo || (userData.grupo || ''),
+                userData: userData,
+                ts: new Date().toISOString()
+            };
+            const code = btoa(unescape(encodeURIComponent(JSON.stringify(snapshot))));
+
+            // Copiar al portapapeles
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    showToast('📋 Código de progreso copiado al portapapeles');
+                });
+            }
+
+            // Mostrar modal con el código
+            document.getElementById('export-code-area').value = code;
+            new bootstrap.Modal(document.getElementById('exportProgressModal')).show();
+        }
+
+        function importProgress() {
+            const raw = document.getElementById('import-code-input').value.trim();
+            if (!raw) { alert('Pega el código de progreso primero.'); return; }
+            try {
+                const snap = JSON.parse(decodeURIComponent(escape(atob(raw))));
+                if (!snap.user || !snap.userData) throw new Error('Formato inválido');
+
+                // Guardar en localStorage
+                let users = JSON.parse(localStorage.getItem('ia_users') || '[]');
+                if (!users.includes(snap.user)) {
+                    users.push(snap.user);
+                    localStorage.setItem('ia_users', JSON.stringify(users));
+                }
+                localStorage.setItem(`ia_data_${snap.user}`, JSON.stringify(snap.userData));
+
+                // Seleccionar automáticamente el perfil
+                loadUsers();
+                document.getElementById('user-select').value = snap.user;
+                document.getElementById('import-code-input').value = '';
+
+                showToast('✅ Progreso restaurado — haz clic en Empezar Ruta');
+            } catch(err) {
+                alert('❌ Código inválido. Asegúrate de copiar el código completo.');
+            }
+        }
+
+        async function backupProgressToSheets() {
+            if (!SHEETS_URL || SHEETS_URL === 'TU_URL_AQUI') return;
+            const completed = sortedData.filter(it => userData.quizzes[it.id] === true).length;
+            const pct = Math.round((completed / sortedData.length) * 100);
+            try {
+                await fetch(SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tipo: 'progreso',
+                        fecha: new Date().toLocaleDateString('es-CR'),
+                        hora:  new Date().toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' }),
+                        estudiante: currentUser.replace(/\s*\([^)]*\)$/, '').trim(),
+                        grupo: currentGrupo || (userData.grupo || ''),
+                        unidades_completadas: completed,
+                        porcentaje: pct + '%'
+                    })
+                });
+            } catch(e) { /* silencioso */ }
+        }
+        // ───────────────────────────────────────────────────────────────────────
+
+        // ── Tracking de visitas a Google Sheets ─────────────────────────────
+        function showToast(msg) {
+            const toast = document.getElementById('tracking-toast');
+            document.getElementById('tracking-toast-msg').textContent = msg;
+            toast.style.display = 'block';
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        async function sendToSheets(payload) {
+            if (!SHEETS_URL || SHEETS_URL === 'TU_URL_AQUI') return; // Sin URL configurada
+            try {
+                await fetch(SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Necesario para Google Apps Script
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                showToast('✓ Visita registrada en Google Sheets');
+            } catch (err) {
+                console.warn('No se pudo registrar la visita:', err);
+            }
+        }
+
+        function trackVisit(item) {
+            // Calcular tiempo en la unidad anterior
+            const ahora = Date.now();
+            const tiempoSegundos = visitStartTime ? Math.round((ahora - visitStartTime) / 1000) : 0;
+            visitStartTime = ahora;
+
+            const now = new Date();
+            const payload = {
+                fecha:       now.toLocaleDateString('es-CR'),
+                hora:        now.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' }),
+                estudiante:  currentUser.replace(/\s*\([^)]*\)$/, '').trim(),
+                grupo:       currentGrupo || (userData.grupo || ''),
+                nivel:       item.nivel,
+                area:        item.subarea,
+                concepto:    item.ra,
+                tiempo:      tiempoSegundos
+            };
+            sendToSheets(payload);
+        }
+        // ────────────────────────────────────────────────────────────────────
+
+        // Render the active learning card
+        function renderCard() {
+            const card = document.getElementById('focused-card');
+            const item = sortedData[activeIndex];
+            const maxUnlocked = getMaxUnlockedIndex();
+            const isCompleted = userData.quizzes[item.id] === true;
+
+            const buildBadges = (saberes, type) => saberes.map(s => {
+                let cls = 'badge-ini';
+                if (type === 'comp')      cls = 'badge-comp';
+                if (type === 'evaluados') cls = 'badge-eval';
+                const readTerms = userData.termsRead[item.id] || [];
+                const isRead    = readTerms.includes(s.term);
+                return `<span class="badge saber-badge ${cls}${isRead ? ' term-read' : ''}"
+                       role="button" tabindex="0"
+                       data-term="${s.term.replace(/"/g, '&quot;')}"
+                       aria-label="Ver definición: ${s.term.replace(/'/g, '&apos;')}"
+                       onclick="showDef('${s.term.replace(/'/g, "\\'")}','${s.definition.replace(/'/g, "\\'")}','${s.example.replace(/'/g, "\\'")}')"
+                       onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                    ${s.term}
+                </span>`;
+            }).join('');
+
+            let evaluadosHtml = '';
+            if (item.conceptos_evaluados && item.conceptos_evaluados.length > 0) {
+                evaluadosHtml = `
+                    <div class="mb-4 p-3 rounded" style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3);">
+                        <small class="fw-bold text-warning d-block mb-2"><i class="fas fa-star me-1"></i> Conceptos Evaluados en Test (Cuadernillo 2025):</small>
+                        <div class="badges-wrap">
+                            ${buildBadges(item.conceptos_evaluados, 'evaluados')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            const allTerms   = getAllTerms(item);
+            const readTerms  = userData.termsRead[item.id] || [];
+            const totalTerms = allTerms.length;
+            const readCount  = allTerms.filter(t => readTerms.includes(t)).length;
+            const allRead    = readCount >= totalTerms;
+            const pct        = totalTerms > 0 ? Math.round((readCount / totalTerms) * 100) : 100;
+
+            const quizHtml = `
+                <!-- Panel: quiz bloqueado hasta leer todos los términos -->
+                <div id="quiz-lock-panel" style="display: ${allRead || isCompleted ? 'none' : 'block'}">
+                    <p class="fw-bold mb-2" style="font-size:1rem; color: var(--primary);">
+                        <i class="fas fa-lock me-2"></i>Cuestionario bloqueado
+                    </p>
+                    <p class="mb-3" style="font-size:0.95rem; color: var(--text-sub);">
+                        Debes hacer clic en cada término y leer su definición antes de poder responder.
+                        Faltan <strong id="quiz-lock-remaining">${totalTerms - readCount}</strong> término(s) por leer.
+                    </p>
+                    <div class="progress" style="height:8px; border-radius:4px; background:rgba(255,255,255,0.1);">
+                        <div id="reading-progress-bar" style="width:${pct}%"></div>
+                    </div>
+                    <small id="reading-counter" class="text-muted mt-1 d-block">${readCount} de ${totalTerms} términos leídos</small>
+                </div>
+
+                <!-- Quiz activo -->
+                <div id="quiz-active-wrap" style="display: ${allRead || isCompleted ? 'block' : 'none'}">
+                    <div class="quiz-container" role="group" aria-labelledby="quiz-label-${item.id}">
+                        <h6 class="fw-bold mb-2" id="quiz-label-${item.id}"><i class="fas fa-question-circle me-1" aria-hidden="true"></i> Pregunta de Comprobación:</h6>
+                        <p class="mb-3">${item.quiz.question}</p>
+                        <div class="d-flex flex-column gap-2">
+                            ${item.quiz.options.map((opt, i) => {
+                                const isCorrect = isCompleted && i === item.quiz.answer;
+                                return `
+                                    <button class="quiz-btn w-100 ${isCorrect ? 'correct' : ''}"
+                                            onclick="checkQuiz(${item.id}, ${item.quiz.answer}, ${i})"
+                                            ${isCompleted ? 'disabled aria-disabled="true"' : ''}>
+                                        ${isCorrect ? '<i class="fas fa-check-circle me-2" aria-hidden="true"></i>' : ''} ${opt}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            card.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge bg-primary px-3 py-2 fs-6">${item.nivel}</span>
+                    <span class="text-muted fw-bold">Unidad ${activeIndex + 1} de ${sortedData.length}</span>
+                </div>
+                
+                <h5 class="mb-1" style="font-size:0.78rem; font-weight:700; letter-spacing:0.08em; color: var(--text-sub); text-transform:uppercase;">${item.subarea}</h5>
+                <h2 class="brand-font fw-bold mb-3" style="color: var(--text-main);">${item.ra}</h2>
+                <p class="mb-4 border-start border-4 border-primary ps-3" style="font-size:1.05rem; color: var(--text-sub);">${item.il}</p>
+                
+                <hr class="my-4 opacity-25">
+
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-lg-6">
+                        <div class="p-3 rounded h-100" style="background: rgba(99,102,241,0.07); border: 1px solid rgba(99,102,241,0.2);">
+                            <h6 class="fw-bold text-primary mb-3"><i class="fas fa-book-reader me-1"></i> Saberes Iniciales:</h6>
+                            <div class="badges-wrap">
+                                ${buildBadges(item.saberes_iniciales, 'inicial')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="p-3 rounded h-100" style="background: rgba(168,85,247,0.07); border: 1px solid rgba(168,85,247,0.2);">
+                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-plus-circle me-1"></i> Saberes Complementarios:</h6>
+                            <div class="badges-wrap">
+                                ${buildBadges(item.saberes_complementarios, 'comp')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                ${evaluadosHtml}
+
+                ${quizHtml}
+
+                <div class="d-flex justify-content-between mt-5 no-print">
+                    <button class="btn btn-outline-secondary px-4 py-2" onclick="selectUnit(${activeIndex - 1})" ${activeIndex === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-arrow-left me-1"></i> Anterior
+                    </button>
+                    
+                    <button class="btn btn-primary px-4 py-2" onclick="selectUnit(${activeIndex + 1})" ${activeIndex >= maxUnlocked ? 'disabled' : ''}>
+                        Siguiente <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            `;
+            // Registrar la visita al concepto en Google Sheets
+            trackVisit(item);
+        }
+
+        function updateProgressPercentage() {
+            const completed = sortedData.filter(item => userData.quizzes[item.id] === true).length;
+            const pct = Math.round((completed / sortedData.length) * 100);
+            document.getElementById('progress-percentage').textContent = `Progreso: ${pct}%`;
+        }
+
+        // Generate student report
+        function generateReport() {
+            document.getElementById('report-student-name').textContent = currentUser;
+            document.getElementById('report-date').textContent = new Date().toLocaleDateString('es-CR');
+            
+            const dominados = sortedData.filter(item => userData.quizzes[item.id] === true).length;
+            const pct = Math.round((dominados / sortedData.length) * 100);
+            
+            document.getElementById('report-percentage').textContent = `${pct}%`;
+            document.getElementById('report-total-dominados').textContent = dominados;
+            document.getElementById('report-total-quizzes').textContent = dominados;
+            document.querySelectorAll('.report-total-units').forEach(el => el.textContent = sortedData.length);
+
+            const details = document.getElementById('report-details');
+            details.innerHTML = '';
+
+            const subareas = [...new Set(sortedData.map(d => d.subarea))];
+            
+            subareas.forEach(sa => {
+                const items = sortedData.filter(d => d.subarea === sa);
+                const dominados_sa = items.filter(d => userData.quizzes[d.id] === true);
+                
+                if(dominados_sa.length > 0) {
+                    details.innerHTML += `
+                        <div class="mt-4">
+                            <h5 class="border-bottom pb-2 text-primary"><i class="fas fa-check-circle me-2"></i>${sa}</h5>
+                            <ul class="list-group list-group-flush bg-transparent">
+                                ${dominados_sa.map(d => `
+                                    <li class="list-group-item bg-transparent text-light py-2"><i class="fas fa-check text-success me-2"></i> <strong>${d.nivel}:</strong> ${d.ra}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        // ── Glosario Técnico ─────────────────────────────────────────────────
+        function renderGlossary(filter = '') {
+            const container = document.getElementById('glossary-content');
+            const query = filter.toLowerCase().trim();
+            let html = '';
+            let totalMatches = 0;
+
+            GLOSARIO_TECNICO.forEach(cat => {
+                const filteredTerms = cat.terminos.filter(t => {
+                    if (!query) return true;
+                    return t.term.toLowerCase().includes(query) || t.definition.toLowerCase().includes(query);
+                });
+
+                if (filteredTerms.length === 0) return;
+                totalMatches += filteredTerms.length;
+
+                html += `
+                    <div class="glossary-cat-card mb-4" style="background: ${cat.color}12; border: 1px solid ${cat.color}40;">
+                        <h5 class="brand-font fw-bold mb-3" style="color: ${cat.color};">
+                            <i class="fas ${cat.icono} me-2"></i>${cat.categoria}
+                            <span class="glossary-count">(${filteredTerms.length} términos)</span>
+                        </h5>
+                        <div>
+                            ${filteredTerms.map(t => {
+                                const safeTerm = t.term.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                                const highlighted = query ? highlightMatch(t.term, query) : t.term;
+                                const highlightedDef = query ? highlightMatch(t.definition, query) : t.definition;
+                                return `
+                                    <div class="glossary-term" onclick="this.classList.toggle('open')">
+                                        <div class="glossary-term-title">
+                                            <i class="fas fa-chevron-right"></i>
+                                            <span>${highlighted}</span>
+                                        </div>
+                                        <div class="glossary-term-def">${highlightedDef}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (totalMatches === 0 && query) {
+                html = `
+                    <div class="glossary-no-results">
+                        <i class="fas fa-search fa-2x mb-3 d-block" style="opacity:0.3;"></i>
+                        No se encontraron términos para <strong>"${query}"</strong>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function highlightMatch(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<mark style="background:#fbbf24;color:#000;border-radius:2px;padding:0 2px;">$1</mark>');
+        }
+
+        function filterGlossary() {
+            const query = document.getElementById('glossary-search-input').value;
+            renderGlossary(query);
+        }
+        // ────────────────────────────────────────────────────────────────────
+
+        // Load users on startup
+        loadUsers();
+    </script>
+</body>
+</html>
